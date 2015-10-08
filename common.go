@@ -23,6 +23,7 @@ const (
 	tagInteger         = 2
 	tagBitString       = 3
 	tagOctetString     = 4
+	tagNull            = 5
 	tagOID             = 6
 	tagInstance        = 8
 	tagEnum            = 10

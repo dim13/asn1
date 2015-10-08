@@ -460,8 +460,15 @@ func marshalBody(out *forkableWriter, value reflect.Value, params fieldParameter
 				startingField = 1
 			}
 		}
+
 		if t.NumField() > 0 && t.Field(0).Type == tagType {
 			startingField = 1
+		}
+
+		if t.NumField() == startingField {
+			err = marshalTagAndLength(out,
+				tagAndLength{classUniversal, tagNull, 0, false})
+			return
 		}
 
 		for i := startingField; i < t.NumField(); i++ {
