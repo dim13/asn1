@@ -15,3 +15,7 @@ with two additions:
 ## TODO
 
 - [ ] Testing
+
+## Links
+
+- https://groups.google.com/forum/#!topic/golang-nuts/ByIhPoSKHt0
