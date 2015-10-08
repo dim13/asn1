@@ -409,6 +409,7 @@ type RawValue struct {
 // this type. It's an error for any of the other fields to have this type.
 type RawContent []byte
 
+// Null represents NULL value
 type Null struct{}
 
 // Tagging

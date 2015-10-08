@@ -425,9 +425,6 @@ func marshalBody(out *forkableWriter, value reflect.Value, params fieldParameter
 		return marshalObjectIdentifier(out, value.Interface().(ObjectIdentifier))
 	case bigIntType:
 		return marshalBigInt(out, value.Interface().(*big.Int))
-	case nullType:
-		return marshalTagAndLength(out,
-			tagAndLength{classUniversal, tagNull, 0, false})
 	}
 
 	switch v := value; v.Kind() {
@@ -548,7 +545,8 @@ func marshalField(out *forkableWriter, v reflect.Value, params fieldParameters) 
 		}
 	}
 
-	if v.Type() == rawValueType {
+	switch v.Type() {
+	case rawValueType:
 		rv := v.Interface().(RawValue)
 		if len(rv.FullBytes) != 0 {
 			_, err = out.Write(rv.FullBytes)
@@ -559,6 +557,10 @@ func marshalField(out *forkableWriter, v reflect.Value, params fieldParameters) 
 			}
 			_, err = out.Write(rv.Bytes)
 		}
+		return
+	case nullType:
+		err = marshalTagAndLength(out,
+			tagAndLength{classUniversal, tagNull, 0, false})
 		return
 	}
 
