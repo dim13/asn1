@@ -706,13 +706,6 @@ func parseField(v reflect.Value, bytes []byte, initOffset int, params fieldParam
 		universalTag = tagGeneralizedTime
 	}
 
-	if params.set {
-		universalTag = tagSet
-	}
-
-	expectedClass := classUniversal
-	expectedTag := universalTag
-
 	if v.Kind() == reflect.Struct {
 		if fieldType.NumField() > 0 &&
 			fieldType.Field(0).Type == tagType {
@@ -720,6 +713,17 @@ func parseField(v reflect.Value, bytes []byte, initOffset int, params fieldParam
 			params = parseFieldParameters(field.Tag.Get("asn1"))
 		}
 	}
+
+	if params.set {
+		universalTag = tagSet
+	}
+
+	if params.instance {
+		universalTag = tagInstance
+	}
+
+	expectedClass := classUniversal
+	expectedTag := universalTag
 
 	if !params.explicit && params.tag != nil {
 		expectedClass = classContextSpecific

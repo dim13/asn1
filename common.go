@@ -24,6 +24,7 @@ const (
 	tagBitString       = 3
 	tagOctetString     = 4
 	tagOID             = 6
+	tagInstance        = 8
 	tagEnum            = 10
 	tagUTF8String      = 12
 	tagSequence        = 16
@@ -77,6 +78,7 @@ type fieldParameters struct {
 	timeType     int    // the time tag to use when marshaling.
 	set          bool   // true iff this should be encoded as a SET
 	omitEmpty    bool   // true iff this should be omitted if empty when marshaling.
+	instance     bool   // true iff this should be encoded as INSTANCE
 
 	// Invariants:
 	//   if explicit is set, tag is non-nil.
@@ -126,6 +128,8 @@ func parseFieldParameters(str string) (ret fieldParameters) {
 			}
 		case part == "omitempty":
 			ret.omitEmpty = true
+		case part == "instance":
+			ret.instance = true
 		}
 	}
 	return
