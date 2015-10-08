@@ -409,6 +409,8 @@ type RawValue struct {
 // this type. It's an error for any of the other fields to have this type.
 type RawContent []byte
 
+type Null struct{}
+
 // Tagging
 
 // An anonymous Tag is used to tag a SEQUENCE. For example:
@@ -552,6 +554,7 @@ var (
 	rawContentsType      = reflect.TypeOf(RawContent(nil))
 	bigIntType           = reflect.TypeOf(new(big.Int))
 	tagType              = reflect.TypeOf(Tag{})
+	nullType             = reflect.TypeOf(Null{})
 )
 
 // invalidLength returns true iff offset + length > sliceLength, or if the
