@@ -415,7 +415,7 @@ type RawContent []byte
 //	Foo ::= [APPLICATION 2] SEQUENCE {
 //	}
 // should be tagged as
-//	 type Foo struct {
+//	type Foo struct {
 //		asn1.Tag `asn1:"application,tag:2"`
 //	}
 type Tag struct{}
