@@ -460,6 +460,9 @@ func marshalBody(out *forkableWriter, value reflect.Value, params fieldParameter
 				startingField = 1
 			}
 		}
+		if t.NumField() > 0 && t.Field(0).Type == tagType {
+			startingField = 1
+		}
 
 		for i := startingField; i < t.NumField(); i++ {
 			var pre *forkableWriter
@@ -513,6 +516,14 @@ func marshalField(out *forkableWriter, v reflect.Value, params fieldParameters) 
 
 	if v.Kind() == reflect.Slice && v.Len() == 0 && params.omitEmpty {
 		return
+	}
+
+	if v.Kind() == reflect.Struct {
+		t := v.Type()
+		if t.NumField() > 0 && t.Field(0).Type == tagType {
+			field := t.Field(0)
+			params = parseFieldParameters(field.Tag.Get("asn1"))
+		}
 	}
 
 	if params.optional && params.defaultValue != nil && canHaveDefaultValue(v.Kind()) {
@@ -640,10 +651,16 @@ func marshalField(out *forkableWriter, v reflect.Value, params fieldParameters) 
 //	printable:	causes strings to be marshaled as ASN.1, PrintableString strings.
 //	utf8:		causes strings to be marshaled as ASN.1, UTF8 strings
 func Marshal(val interface{}) ([]byte, error) {
+	return MarshalWithParams(val, "")
+}
+
+// MarshalWithParams allows field parameter to be speciefied for the
+// top-level element. The form of the params is the same as the field tags.
+func MarshalWithParams(val interface{}, params string) ([]byte, error) {
 	var out bytes.Buffer
 	v := reflect.ValueOf(val)
 	f := newForkableWriter()
-	err := marshalField(f, v, fieldParameters{})
+	err := marshalField(f, v, parseFieldParameters(params))
 	if err != nil {
 		return nil, err
 	}

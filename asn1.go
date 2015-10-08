@@ -411,6 +411,15 @@ type RawContent []byte
 
 // Tagging
 
+// An anonymous Tag is used to tag a SEQUENCE. For example:
+//	Foo ::= [APPLICATION 2] SEQUENCE {
+//	}
+// should be tagged as
+//	 type Foo struct {
+//		asn1.Tag `asn1:"application,tag:2"`
+//	}
+type Tag struct{}
+
 // parseTagAndLength parses an ASN.1 tag and length pair from the given offset
 // into a byte slice. It returns the parsed data and the new offset. SET and
 // SET OF (tag 17) are mapped to SEQUENCE and SEQUENCE OF (tag 16) since we
@@ -542,6 +551,7 @@ var (
 	rawValueType         = reflect.TypeOf(RawValue{})
 	rawContentsType      = reflect.TypeOf(RawContent(nil))
 	bigIntType           = reflect.TypeOf(new(big.Int))
+	tagType              = reflect.TypeOf(Tag{})
 )
 
 // invalidLength returns true iff offset + length > sliceLength, or if the
@@ -703,6 +713,14 @@ func parseField(v reflect.Value, bytes []byte, initOffset int, params fieldParam
 	expectedClass := classUniversal
 	expectedTag := universalTag
 
+	if v.Kind() == reflect.Struct {
+		if fieldType.NumField() > 0 &&
+			fieldType.Field(0).Type == tagType {
+			field := fieldType.Field(0)
+			params = parseFieldParameters(field.Tag.Get("asn1"))
+		}
+	}
+
 	if !params.explicit && params.tag != nil {
 		expectedClass = classContextSpecific
 		expectedTag = *params.tag
@@ -813,6 +831,9 @@ func parseField(v reflect.Value, bytes []byte, initOffset int, params fieldParam
 		for i := 0; i < structType.NumField(); i++ {
 			field := structType.Field(i)
 			if i == 0 && field.Type == rawContentsType {
+				continue
+			}
+			if i == 0 && field.Type == tagType {
 				continue
 			}
 			innerOffset, err = parseField(val.Field(i), innerBytes, innerOffset, parseFieldParameters(field.Tag.Get("asn1")))
