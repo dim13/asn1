@@ -7,6 +7,9 @@ with two additions:
   method
 - [x] [asn1.Tag](https://godoc.org/github.com/dim13/asn1#Tag)
   field to tag a SEQUENCE
+- [x] Fixed APPLICATION marshaling
+- [x] Added INSTANCE OF
+- [ ] NULL tag
 
 ## Documentation
 
