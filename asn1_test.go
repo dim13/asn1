@@ -405,7 +405,7 @@ var parseFieldParametersTestData []parseFieldParametersTest = []parseFieldParame
 	{"default:42", fieldParameters{defaultValue: newInt64(42)}},
 	{"tag:17", fieldParameters{tag: newInt(17)}},
 	{"optional,explicit,default:42,tag:17", fieldParameters{optional: true, explicit: true, defaultValue: newInt64(42), tag: newInt(17)}},
-	{"optional,explicit,default:42,tag:17,rubbish1", fieldParameters{true, true, false, newInt64(42), newInt(17), 0, 0, false, false}},
+	{"optional,explicit,default:42,tag:17,rubbish1", fieldParameters{optional: true, explicit: true, application: false, defaultValue: newInt64(42), tag: newInt(17), stringType: 0, timeType: 0, omitEmpty: false, instance: false}},
 	{"set", fieldParameters{set: true}},
 }
 
